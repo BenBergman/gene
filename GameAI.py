@@ -271,8 +271,30 @@ def new_game(session, hand):
         # Remove the card from our hand.
         hand.remove(card)
 
+
 def list_to_hand(list):
     return set([Card(card) for card in list])
+
+
+def get_allowed_cards(hand, lead_card):
+    if lead_card == None:
+        return hand
+
+    allowed_cards = set()
+    for card in hand:
+        if card.suit == lead_card.suit:
+            allowed_cards.add(card)
+        elif card.suit == "SPADES":
+            allowed_cards.add(card)
+
+    # Check if we actually found any cards in our hand with the
+    # appropriate suit. If we don't have any, there are no restrictions
+    # on the card we can then play.
+    if not allowed_cards:
+        allowed_cards = hand
+
+    return allowed_cards
+
 
 if __name__ == "__main__":
     try:

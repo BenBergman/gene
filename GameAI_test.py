@@ -20,12 +20,14 @@ class TestSequenceFunctions(unittest.TestCase):
 
         self.assertEqual(bot.bid(hand), 9)
 
+
     def test_random_play_bot(self):
         bot = Bot({"bid_style":[0, 6, 6],
                    "play_style":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]})
 
         one_card_hand = list_to_hand(["H01"])
         self.assertEqual(bot.play(one_card_hand, None, 0), Card("H01"))
+
 
     def test_average_bid_bot(self):
         bot = Bot({"bid_style":[1, 3, 2],
@@ -50,31 +52,14 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(bot.bid(hand), 13)
 
 
+    def test_get_allowed_cards(self):
+        allowed = get_allowed_cards(hand, None)
+        self.assertEqual(allowed, hand)
 
-#    def test_lambda_stuff(self):
-#        #foo = lambda a, b: a + b
-#        #bar = lambda a, b: a * b
-#        #baz = [foo, bar]
-#
-#        baz = [
-#            lambda a, b: a + b,
-#            lambda a, b: a * b
-#            ]
-#
-#        result = {}
-#        for func in baz:
-#            result[func] = func(3, 5)
-#
-#        self.assertEqual(result, {})
+        allowed = get_allowed_cards(hand, Card("C05"))
+        exp_allowed = list_to_hand(["C04", "C08", "C12", "S01", "S05", "S09", "S13"])
+        self.assertEqual(allowed, exp_allowed)
 
-#    def test_get_allowed_cards(self):
-#        allowed = get_allowed_cards(hand, None)
-#        self.assertEqual(allowed, hand)
-#
-#        allowed = get_allowed_cards(hand, Card("C05"))
-#        exp_allowed = list_to_hand(["C04", "C08", "C12", "S01", "S05", "S09", "S13"])
-#        self.assertEqual(allowed, exp_allowed)
-#
 #    def test_lowest_winning_card(self):
 #        lead_card = Card("C05")
 #
