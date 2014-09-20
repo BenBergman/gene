@@ -46,14 +46,15 @@ class Bot:
         return get_play_func(self.params["play_style"], round)(allowed_cards, lead_card)
 
 
-def get_bid_func(bid_style):
+def get_bid_funcs(bid_style):
     (a, b) = bid_style[1:3]
-    bid_funcs = [
+    return [
         lambda h: bid_random(a, b, h),
         lambda h: bid_from_average_value(a, b, h),
         ]
 
-    return bid_funcs[bid_style[0]]
+def get_bid_func(bid_style):
+    return get_bid_funcs(bid_style)[bid_style[0]]
 
 def bid_random(low, high, hand):
     #currently assuming valid range is 1-13
@@ -85,12 +86,13 @@ def bid_from_average_value(decrease, increase, hand):
     return bid
 
 
-def get_play_func(play_style, round):
-    play_funcs = [
+def get_play_funcs():
+    return [
         lambda a, l: play_random(a, l)
         ]
 
-    return play_funcs[play_style[round]]
+def get_play_func(play_style, round):
+    return get_play_funcs()[play_style[round]]
 
 def play_random(allowed_cards, lead_card):
     idx = randint(0, len(allowed_cards) - 1)
