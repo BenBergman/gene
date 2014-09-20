@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from json import dump, dumps, loads
+from json import dump, dumps, load, loads
 from copy import deepcopy
 from random import randint
 from random import random
@@ -46,6 +46,17 @@ def serializable_bots(bots):
         new_dict.append(deepcopy(bot.params))
 
     return new_dict
+
+
+def load_bots(filename):
+    json_data=open(filename)
+    data = load(json_data)
+    json_data.close()
+    bots = []
+    for bot_data in data:
+        bots.append(Bot(bot_data))
+
+    return bots
 
 
 def generate_random_bot():

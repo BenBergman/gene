@@ -222,11 +222,19 @@ class TestSequenceFunctions(unittest.TestCase):
         bots[3].save_score(7, 90)
         bots[2].save_score(8, 30)
 
-        os.remove("test_file.json")
+        try:
+            os.remove("test_file.json")
+        except:
+            pass
         with open('test_file.json', 'w') as outfile:
             dump(serializable_bots(bots), outfile)
 
         self.assertTrue(os.path.isfile("test_file.json"))
+        loaded_bots = load_bots("test_file.json")
+
+        for i in range(0, len(bots)):
+            self.assertEqual(loaded_bots[i], bots[i])
+
         os.remove("test_file.json")
 
 
