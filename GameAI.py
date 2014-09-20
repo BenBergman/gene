@@ -118,6 +118,19 @@ def lowest_winning_same_suit(allowed_cards, lead_card):
     return candidate_card
 
 
+def lowest_non_trump(allowed_cards):
+    candidate_card = None
+    for card in allowed_cards:
+        if card.suit == "SPADES":
+            continue
+        if candidate_card == None:
+            candidate_card = card
+            continue
+        if card.value < candidate_card.value:
+            candidate_card = card
+    return candidate_card
+
+
 
 def failure(msg):
     print("!! " + msg)
