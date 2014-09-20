@@ -118,11 +118,11 @@ def mutate_bot(bot):
 def crossover_bots(bot_a, bot_b):
     new_params = {}
     if random() > 0.5:
-        new_params["bid_style"] = bot_a.params["bid_style"]
-        new_params["play_style"] = bot_b.params["play_style"]
+        new_params["bid_style"] = deepcopy(bot_a.params["bid_style"])
+        new_params["play_style"] = deepcopy(bot_b.params["play_style"])
     else:
-        new_params["play_style"] = bot_a.params["play_style"]
-        new_params["bid_style"] = bot_b.params["bid_style"]
+        new_params["play_style"] = deepcopy(bot_a.params["play_style"])
+        new_params["bid_style"] = deepcopy(bot_b.params["bid_style"])
 
     return Bot(new_params)
 

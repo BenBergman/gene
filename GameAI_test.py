@@ -182,6 +182,11 @@ class TestSequenceFunctions(unittest.TestCase):
         bots = join_bot_lists(bots, new_bots)
         self.assertEqual(len(bots), 27)
 
+        new_bots[0].save_score(11, 100)
+
+        bots = join_bot_lists(bots, new_bots)
+        self.assertEqual(len(bots), 27)
+
 
     def test_get_top_bots(self):
         bots = [generate_random_bot(), generate_random_bot(), generate_random_bot(), generate_random_bot(), generate_random_bot()]
