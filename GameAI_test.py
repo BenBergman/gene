@@ -52,6 +52,14 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(bot.bid(hand), 13)
 
 
+    def test_play_lowest_winning_card(self):
+        test_hand = list_to_hand(["C01", "H02"])
+        lead_card = Card("H03")
+        allowed_cards = get_allowed_cards(test_hand, lead_card)
+
+        self.assertEqual(play_lowest_winning_card(allowed_cards, lead_card), Card("H02"))
+
+
     def test_get_allowed_cards(self):
         allowed = get_allowed_cards(hand, None)
         self.assertEqual(allowed, hand)

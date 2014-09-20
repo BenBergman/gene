@@ -92,7 +92,8 @@ def bid_from_average_value(decrease, increase, hand):
 
 def get_play_funcs():
     return [
-        lambda a, l: play_random(a, l)
+        lambda a, l: play_random(a, l),
+        lambda a, l: play_lowest_winning_card(a, l),
         ]
 
 
@@ -103,6 +104,13 @@ def get_play_func(play_style, round):
 def play_random(allowed_cards, lead_card):
     idx = randint(0, len(allowed_cards) - 1)
     return list(allowed_cards)[idx]
+
+
+def play_lowest_winning_card(allowed_cards, lead_card):
+    card = lowest_winning_card(allowed_cards, lead_card)
+    if card != None:
+        return card
+    return lowest_non_trump(allowed_cards)
 
 
 def lowest_winning_card(allowed_cards, lead_card):
