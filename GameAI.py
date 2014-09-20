@@ -2,6 +2,7 @@
 
 from json import dumps, loads
 from random import randint
+from random import random
 from random import seed
 from time import sleep
 from sys import exit, argv
@@ -40,7 +41,7 @@ class Card:
 def generate_random_bot():
     return Bot({
         "bid_style":[
-            randint(0, len(get_bid_funcs()) -  1),
+            random_bid_style_index(),
             randint(1, 13),
             randint(1, 13),
             ],
@@ -52,11 +53,47 @@ def generate_random_play_style():
     play_style = []
     for i in range(0, 13):
         play_style.append([
-            randint(0, len(get_lead_play_funcs()) - 1),
-            randint(0, len(get_second_play_funcs()) - 1),
+            random_lead_play_index(),
+            random_second_play_index(),
             ])
 
     return play_style
+
+
+def mutate_bot(bot):
+    new_bot = Bot(bot.params)
+    threshold = 0.5
+
+    if random() > threshold:
+        new_bot.params["bid_style"][0] = random_bid_style_index()
+
+    for i in range(1, 3):
+        if random() > threshold:
+            new_bot.params["bid_style"][i] = randint(1,13)
+
+    for i in range(0, 13):
+        if random() > threshold:
+            new_bot.params["play_style"][i][0] = random_lead_play_index()
+        if random() > threshold:
+            new_bot.params["play_style"][i][1] = random_second_play_index()
+
+    return new_bot
+
+
+def random_bid_style_index():
+    return random_index(get_bid_funcs())
+
+
+def random_lead_play_index():
+    return random_index(get_lead_play_funcs())
+
+
+def random_second_play_index():
+    return random_index(get_second_play_funcs())
+
+def random_index(array):
+    return randint(0, len(array) - 1)
+
 
 
 class Bot:

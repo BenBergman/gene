@@ -116,5 +116,18 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(len(bot_a.params["play_style"][0]), 2)
 
 
+    def test_mutate_bot(self):
+        bot_a = generate_random_bot()
+        seed(0)
+        bot_b = mutate_bot(bot_a)
+
+        self.assertNotEqual(bot_a, bot_b)
+
+        seed(0)
+        bot_c = mutate_bot(bot_a)
+
+        self.assertNotEqual(bot_c, bot_b)
+
+
 if __name__ == '__main__':
     unittest.main()
