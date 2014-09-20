@@ -44,7 +44,10 @@ class Bot:
         return get_bid_func(self.params["bid_style"])(hand)
 
     def play(self, allowed_cards, lead_card, round):
-        return get_play_func(self.params["play_style"], round)(allowed_cards, lead_card)
+        if lead_card == None:
+            return get_lead_play_func(self.params["play_style"], round)(allowed_cards)
+        else:
+            return get_second_play_func(self.params["play_style"], round)(allowed_cards, lead_card)
 
 
 def get_bid_funcs(bid_style):
@@ -90,15 +93,26 @@ def bid_from_average_value(decrease, increase, hand):
     return bid
 
 
-def get_play_funcs():
+def get_lead_play_funcs():
+    return [
+        lambda a: play_random(a, None),
+        lambda a: play_lowest_card(a),
+        ]
+
+
+def get_lead_play_func(play_style, round):
+    return get_lead_play_funcs()[play_style[round]]
+
+
+def get_second_play_funcs():
     return [
         lambda a, l: play_random(a, l),
         lambda a, l: play_lowest_winning_card(a, l),
         ]
 
 
-def get_play_func(play_style, round):
-    return get_play_funcs()[play_style[round]]
+def get_second_play_func(play_style, round):
+    return get_lead_play_funcs()[play_style[round]]
 
 
 def play_random(allowed_cards, lead_card):
@@ -154,6 +168,17 @@ def lowest_trump(allowed_cards):
     for card in allowed_cards:
         if card.suit != "SPADES":
             continue
+        if candidate_card == None:
+            candidate_card = card
+            continue
+        if card.value < candidate_card.value:
+            candidate_card = card
+    return candidate_card
+
+
+def play_lowest_card(allowed_cards):
+    candidate_card = None
+    for card in allowed_cards:
         if candidate_card == None:
             candidate_card = card
             continue
