@@ -81,11 +81,11 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(str(card), "D01")
 
 
-#    def test_lowest_trump(self):
-#        lead_card = Card("C05")
-#
-#        card = lowest_trump(get_allowed_cards(list_to_hand(["S02", "S13", "S10", "H04", "H09"]), lead_card))
-#        self.assertEqual(str(card), "S02")
+    def test_lowest_trump(self):
+        lead_card = Card("C05")
+
+        card = lowest_trump(get_allowed_cards(list_to_hand(["S02", "S13", "S10", "H04", "H09"]), lead_card))
+        self.assertEqual(str(card), "S02")
 
 
 if __name__ == '__main__':
