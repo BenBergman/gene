@@ -207,6 +207,36 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(top_bots[2].average_score(), 25)
 
 
+    def test_json_export_and_import(self):
+        bots = []
+        seed()
+        for i in range(0, 20):
+            bots.append(generate_random_bot())
+
+        bots[0].save_score(1, 10)
+        bots[0].save_score(2, 20)
+        bots[1].save_score(3, 80)
+        bots[0].save_score(4, 30)
+        bots[0].save_score(5, 10)
+        bots[2].save_score(6, 20)
+        bots[3].save_score(7, 90)
+        bots[2].save_score(8, 30)
+
+        os.remove("test_file.json")
+        with open('test_file.json', 'w') as outfile:
+            dump(serializable_bots(bots), outfile)
+
+        self.assertTrue(os.path.isfile("test_file.json"))
+        os.remove("test_file.json")
+
+
+    def test_serializable_bots(self):
+        bots = [Bot({"bid_style":[0, 6, 6], "play_style":[[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]})]
+        expected = [{"bid_style":[0, 6, 6], "play_style":[[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]}]
+
+        self.assertEqual(serializable_bots(bots), expected)
+
+
 
 if __name__ == '__main__':
     unittest.main()

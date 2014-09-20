@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from json import dumps, loads
+from json import dump, dumps, loads
 from copy import deepcopy
 from random import randint
 from random import random
@@ -8,6 +8,7 @@ from random import seed
 from time import sleep
 from sys import exit, argv
 
+import os
 import urllib2
 
 base = "http://gameai.skullspace.ca/api/"
@@ -37,6 +38,14 @@ class Card:
 
     def __hash__(self):
         return hash(self.abbr)
+
+
+def serializable_bots(bots):
+    new_dict = []
+    for bot in bots:
+        new_dict.append(deepcopy(bot.params))
+
+    return new_dict
 
 
 def generate_random_bot():
