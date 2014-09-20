@@ -45,9 +45,9 @@ class Bot:
 
     def play(self, allowed_cards, lead_card, round):
         if lead_card == None:
-            return get_lead_play_func(self.params["play_style"], round)(allowed_cards)
+            return get_lead_play_func(self.params["play_style"][round][0])(allowed_cards)
         else:
-            return get_second_play_func(self.params["play_style"], round)(allowed_cards, lead_card)
+            return get_second_play_func(self.params["play_style"][round][1])(allowed_cards, lead_card)
 
 
 def get_bid_funcs(bid_style):
@@ -100,8 +100,8 @@ def get_lead_play_funcs():
         ]
 
 
-def get_lead_play_func(play_style, round):
-    return get_lead_play_funcs()[play_style[round]]
+def get_lead_play_func(play_style):
+    return get_lead_play_funcs()[play_style]
 
 
 def get_second_play_funcs():
@@ -111,8 +111,8 @@ def get_second_play_funcs():
         ]
 
 
-def get_second_play_func(play_style, round):
-    return get_lead_play_funcs()[play_style[round]]
+def get_second_play_func(play_style):
+    return get_lead_play_funcs()[play_style]
 
 
 def play_random(allowed_cards, lead_card):
