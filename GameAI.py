@@ -225,6 +225,7 @@ def get_bid_funcs(bid_style=None):
     return [
         lambda h: bid_random(a, b, h),
         lambda h: bid_from_average_value(a, b, h),
+        lambda h: bid_avg_of_params(a, b, h),
         ]
 
 
@@ -263,10 +264,15 @@ def bid_from_average_value(decrease, increase, hand):
     return bid
 
 
+def bid_avg_of_params(a, b, hand):
+    return (a + b) / 2
+
+
 def get_lead_play_funcs():
     return [
         lambda a: play_random(a, None),
         lambda a: play_lowest_card(a),
+        lambda a: play_four(a, None),
         ]
 
 
@@ -278,11 +284,12 @@ def get_second_play_funcs():
     return [
         lambda a, l: play_random(a, l),
         lambda a, l: play_lowest_winning_card(a, l),
+        lambda a, l: play_four(a, l),
         ]
 
 
 def get_second_play_func(play_style):
-    return get_lead_play_funcs()[play_style]
+    return get_second_play_funcs()[play_style]
 
 
 def play_random(allowed_cards, lead_card):
@@ -355,6 +362,12 @@ def play_lowest_card(allowed_cards):
         if card.value < candidate_card.value:
             candidate_card = card
     return candidate_card
+
+
+def play_four(allowed_cards, lead_card):
+    if len(allowed_cards) < 4:
+        return list(allowed_cards)[-1]
+    return list(allowed_cards)[3]
 
 
 
@@ -445,7 +458,7 @@ def play_a_game(bot_id, bot, session):
         # waiting 5 seconds.
         if json["result"] == "retry":
             print("?? " + json["reason"])
-            sleep(5)
+            sleep(1)
         else:
             break
 
@@ -458,7 +471,7 @@ def play_a_game(bot_id, bot, session):
     hand = set([Card(card) for card in cards])
 
     # Run the game AI.
-    new_game(session, hand)
+    new_game(session, bot, hand)
 
     # Cleanup from our game.
     info("Our role in this game is over, but we need to be sure the server has ended the game before we start a new one.")
@@ -469,7 +482,7 @@ def play_a_game(bot_id, bot, session):
         if json["game"] is None:
             break
         info("The server has ended our game.")
-        sleep(5)
+        sleep(1)
 
     json = rawapi("old-game", session=session, game=game_id)
     if json["result"] == "success":
@@ -481,10 +494,10 @@ def play_a_game(bot_id, bot, session):
         if score != None:
             bot.save_score(game_id, score)
 
-def new_game(session, hand):
+def new_game(session, bot, hand):
     # Make a bid, which we'll do randomly, by choosing a number between 1 and
     # 13.
-    bid = randint(1, 13)
+    bid = bot.bid(hand)
 
     # Register our bid with the server.
     info("Attempting to bid " + str(bid) + ".")
@@ -493,10 +506,11 @@ def new_game(session, hand):
 
     # Check the status repeatedly, and if it's our turn play a card, until all
     # cards have been played and the game ends.
+    round = 0
     while hand:
         # Always wait 1 second, it may not seem like much but it helps avoid
         # pinning the client's CPU and flooding the server.
-        sleep(1)
+        sleep(0.5)
 
         # Request the game's status from the server.
         info("Requesting the status of our game...")
@@ -526,6 +540,7 @@ def new_game(session, hand):
             # We can play any card we want, since we're going first in this
             # round. So all the cards in our hand are allowed.
             allowed_cards = hand
+            lead_card = None
             info("We have the lead this round, so we may choose any card.")
         else:
             # We can only play cards that match the suit of the lead card, since
@@ -549,8 +564,8 @@ def new_game(session, hand):
         # Among the cards that we have determined are valid, according to the
         # rules, choose one to play at random.
         idx = randint(0, len(allowed_cards) - 1)
-        card = list(allowed_cards)[idx]
-        info("We have randomly chosen " + str(card) + ".")
+        card = bot.play(allowed_cards, lead_card, round)
+        info("We have chosen " + str(card) + ".")
 
         # Now that the card has been chosen, play it.
         info("Attempting to play " + str(card) + "...")
@@ -559,6 +574,7 @@ def new_game(session, hand):
 
         # Remove the card from our hand.
         hand.remove(card)
+        round += 1
 
 
 def list_to_hand(list):

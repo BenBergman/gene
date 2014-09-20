@@ -29,6 +29,14 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(bot.play(one_card_hand, None, 0), Card("H01"))
 
 
+    def test_random_play_bot(self):
+        bot = Bot({"bid_style":[0, 6, 6],
+                   "play_style":[[1, 1], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]})
+
+        two_card_hand = list_to_hand(["H01", "H03", "H05"])
+        self.assertEqual(bot.play(two_card_hand, Card("H02"), 0), Card("H03"))
+
+
     def test_average_bid_bot(self):
         bot = Bot({"bid_style":[1, 3, 2],
                    "play_style":[[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]})
