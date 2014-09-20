@@ -60,13 +60,13 @@ def generate_random_play_style():
     return play_style
 
 
-#def new_generation(bots):
-#    top_bots = get_top_bots(bots, 3)
-#    mutants = [mutate_bot(top_bots[0]), mutate_bot(top_bots[0]), mutate_bot(top_bots[1])]
-#    crossovers = [crossover_bots(top_bots[0], bots[random_index(bots)])]
-#    new_bots = [generate_random_bot(), generate_random_bot(), generate_random_bot()]
-#
-#    return top_bots + mutants + crossovers + new_bots
+def new_generation(bots):
+    top_bots = get_top_bots(bots, 3)
+    mutants = [mutate_bot(top_bots[0]), mutate_bot(top_bots[0]), mutate_bot(top_bots[1])]
+    crossovers = [crossover_bots(top_bots[0], bots[random_index(bots)])]
+    new_bots = [generate_random_bot(), generate_random_bot(), generate_random_bot()]
+
+    return top_bots + mutants + crossovers + new_bots
 
 
 def get_top_bots(bots, desired):
