@@ -123,7 +123,7 @@ class Bot:
             return get_second_play_func(self.params["play_style"][round][1])(allowed_cards, lead_card)
 
     def average_score(self):
-        if self.params == None:
+        if self.params.get("scores") == None:
             return None
 
         sum = 0
@@ -132,6 +132,10 @@ class Bot:
             sum += scores[game]
 
         return sum / len(scores)
+
+    def save_score(self, game, score):
+        self.params.setdefault("scores", {})
+        self.params["scores"].setdefault(game, score)
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.params == other.params
