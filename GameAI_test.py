@@ -60,11 +60,12 @@ class TestSequenceFunctions(unittest.TestCase):
         exp_allowed = list_to_hand(["C04", "C08", "C12", "S01", "S05", "S09", "S13"])
         self.assertEqual(allowed, exp_allowed)
 
-#    def test_lowest_winning_card(self):
-#        lead_card = Card("C05")
-#
-#        card = lowest_winning_card(get_allowed_cards(hand, lead_card), lead_card)
-#        self.assertEqual(str(card), "C08")
+
+    def test_lowest_winning_card(self):
+        lead_card = Card("C05")
+
+        card = lowest_winning_card(get_allowed_cards(hand, lead_card), lead_card)
+        self.assertEqual(str(card), "C08")
 
 
     def test_lowest_winning_same_suit(self):

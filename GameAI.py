@@ -105,6 +105,16 @@ def play_random(allowed_cards, lead_card):
     return list(allowed_cards)[idx]
 
 
+def lowest_winning_card(allowed_cards, lead_card):
+    card = lowest_winning_same_suit(allowed_cards, lead_card)
+    if card != None:
+        return card
+    card = lowest_trump(allowed_cards)
+    if card != None:
+        return card
+    return None
+
+
 def lowest_winning_same_suit(allowed_cards, lead_card):
     candidate_card = None
     for card in allowed_cards:
