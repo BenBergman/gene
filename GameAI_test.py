@@ -158,5 +158,35 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(bots[2].average_score(), None)
 
 
+#    def test_new_generation(self):
+#        bots = []
+#        for i in range(0, 100):
+#            bots.append(generate_random_bot())
+#
+#        new_bots = new_generation(bots)
+#
+#        self.assertEqual(len(bots), 10)
+
+
+    def test_get_top_bots(self):
+        bots = [generate_random_bot(), generate_random_bot(), generate_random_bot(), generate_random_bot()]
+        bots[0].save_score(1, 10)
+        bots[0].save_score(2, 20)
+        bots[1].save_score(3, 80)
+        bots[0].save_score(4, 30)
+        bots[0].save_score(5, 10)
+        bots[2].save_score(6, 20)
+        bots[3].save_score(7, 90)
+        bots[2].save_score(8, 30)
+
+        top_bots = get_top_bots(bots, 3)
+
+        self.assertEqual(len(top_bots), 3)
+        self.assertEqual(top_bots[0].average_score(), 90)
+        self.assertEqual(top_bots[1].average_score(), 80)
+        self.assertEqual(top_bots[2].average_score(), 25)
+
+
+
 if __name__ == '__main__':
     unittest.main()
