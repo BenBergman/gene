@@ -169,7 +169,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
 
     def test_get_top_bots(self):
-        bots = [generate_random_bot(), generate_random_bot(), generate_random_bot(), generate_random_bot()]
+        bots = [generate_random_bot(), generate_random_bot(), generate_random_bot(), generate_random_bot(), generate_random_bot()]
         bots[0].save_score(1, 10)
         bots[0].save_score(2, 20)
         bots[1].save_score(3, 80)
