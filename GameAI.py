@@ -40,6 +40,11 @@ class Card:
         return hash(self.abbr)
 
 
+def store_bots(bots, filename):
+    with open(filename, 'w') as outfile:
+        dump(serializable_bots(bots), outfile)
+
+
 def serializable_bots(bots):
     new_dict = []
     for bot in bots:
@@ -409,20 +414,40 @@ def main(argv):
     bot_id = json["id"]
     info("Received id '" + str(bot_id) + "'.")
 
+    try:
+        bots = load_bots("ga_backup.json")
+    except:
+        bots = []
+        for i in range(0, 10):
+            bots.append(generate_random_bot())
+
     while True:
-        play_a_game(session)
+        info("Generating next generation...")
+        new_bots = new_generation(bots)
 
-def play_a_game(session):
-    # Ask to be given an opponent to play against.
-    info("Attempting to start a new game...")
-    json = api("new-game", session=session)
+        for bot in new_bots:
+            info("Next bot in generation...")
+            play_a_game(bot_id, bot, session)
+            sleep(5)
 
-    # If there's nobody to play against, start the loop from the top after
-    # waiting 5 seconds.
-    if json["result"] == "retry":
-        print("?? " + json["reason"])
-        sleep(5)
-        return
+        bots = join_bot_lists(bots, new_bots)
+        info("Saving bots to file...")
+        store_bots(bots, "ga_backup.json")
+
+
+def play_a_game(bot_id, bot, session):
+    while True:
+        # Ask to be given an opponent to play against.
+        info("Attempting to start a new game...")
+        json = api("new-game", session=session)
+
+        # If there's nobody to play against, start the loop from the top after
+        # waiting 5 seconds.
+        if json["result"] == "retry":
+            print("?? " + json["reason"])
+            sleep(5)
+        else:
+            break
 
     game_id = json["game"]
     info("Starting game " + str(game_id))
@@ -445,6 +470,16 @@ def play_a_game(session):
             break
         info("The server has ended our game.")
         sleep(5)
+
+    json = rawapi("old-game", session=session, game=game_id)
+    if json["result"] == "success":
+        if json["bot1"] == bot_id:
+            score = json["score1"]
+        elif json["bot2"] == bot_id:
+            score = json["score2"]
+
+        if score != None:
+            bot.save_score(game_id, score)
 
 def new_game(session, hand):
     # Make a bid, which we'll do randomly, by choosing a number between 1 and

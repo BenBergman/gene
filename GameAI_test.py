@@ -226,8 +226,8 @@ class TestSequenceFunctions(unittest.TestCase):
             os.remove("test_file.json")
         except:
             pass
-        with open('test_file.json', 'w') as outfile:
-            dump(serializable_bots(bots), outfile)
+
+        store_bots(bots, "test_file.json")
 
         self.assertTrue(os.path.isfile("test_file.json"))
         loaded_bots = load_bots("test_file.json")
