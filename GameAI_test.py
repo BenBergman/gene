@@ -138,5 +138,13 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertNotEqual(bot_b, bot_c)
 
 
+    def test_bot_average_score(self):
+        bot = Bot({"scores":{12345: 40, 98760: -100}})
+        self.assertEqual(bot.average_score(), -30)
+
+        bot = Bot({"scores":{12345: 40, 98760: -10, 33333: 42}})
+        self.assertEqual(bot.average_score(), 24)
+
+
 if __name__ == '__main__':
     unittest.main()

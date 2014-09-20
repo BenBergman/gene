@@ -122,6 +122,17 @@ class Bot:
         else:
             return get_second_play_func(self.params["play_style"][round][1])(allowed_cards, lead_card)
 
+    def average_score(self):
+        if self.params == None:
+            return None
+
+        sum = 0
+        scores = self.params["scores"]
+        for game in scores:
+            sum += scores[game]
+
+        return sum / len(scores)
+
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.params == other.params
 
