@@ -273,6 +273,7 @@ def get_lead_play_funcs():
         lambda a: play_random(a, None),
         lambda a: play_lowest_card(a),
         lambda a: play_four(a, None),
+        lambda a: play_highest_card(a, None),
         ]
 
 
@@ -285,6 +286,7 @@ def get_second_play_funcs():
         lambda a, l: play_random(a, l),
         lambda a, l: play_lowest_winning_card(a, l),
         lambda a, l: play_four(a, l),
+        lambda a, l: play_highest_card(a, l),
         ]
 
 
@@ -368,6 +370,17 @@ def play_four(allowed_cards, lead_card):
     if len(allowed_cards) < 4:
         return list(allowed_cards)[-1]
     return list(allowed_cards)[3]
+
+
+def play_highest_card(allowed_cards, lead_card):
+    candidate_card = None
+    for card in allowed_cards:
+        if candidate_card == None:
+            candidate_card = card
+            continue
+        if card.value > candidate_card.value:
+            candidate_card = card
+    return candidate_card
 
 
 
