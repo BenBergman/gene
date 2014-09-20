@@ -97,5 +97,24 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(str(card), "S02")
 
 
+    def test_generate_random_bot(self):
+        seed(0)
+        bot_a = generate_random_bot()
+        seed(0)
+        bot_b = generate_random_bot()
+
+        self.assertEqual(bot_a, bot_b)
+
+        bot_a = generate_random_bot()
+        bot_b = generate_random_bot()
+
+        self.assertNotEqual(bot_a, bot_b)
+
+        self.assertEqual(len(bot_a.params), 2)
+        self.assertEqual(len(bot_a.params["bid_style"]), 3)
+        self.assertEqual(len(bot_a.params["play_style"]), 13)
+        self.assertEqual(len(bot_a.params["play_style"][0]), 2)
+
+
 if __name__ == '__main__':
     unittest.main()

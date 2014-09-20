@@ -2,6 +2,7 @@
 
 from json import dumps, loads
 from random import randint
+from random import seed
 from time import sleep
 from sys import exit, argv
 
@@ -36,6 +37,28 @@ class Card:
         return hash(self.abbr)
 
 
+def generate_random_bot():
+    return Bot({
+        "bid_style":[
+            randint(0, len(get_bid_funcs()) -  1),
+            randint(1, 13),
+            randint(1, 13),
+            ],
+        "play_style": generate_random_play_style()
+        })
+
+
+def generate_random_play_style():
+    play_style = []
+    for i in range(0, 13):
+        play_style.append([
+            randint(0, len(get_lead_play_funcs()) - 1),
+            randint(0, len(get_second_play_funcs()) - 1),
+            ])
+
+    return play_style
+
+
 class Bot:
     def __init__(self, json_params):
         self.params = json_params
@@ -49,9 +72,13 @@ class Bot:
         else:
             return get_second_play_func(self.params["play_style"][round][1])(allowed_cards, lead_card)
 
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.params == other.params
 
-def get_bid_funcs(bid_style):
-    (a, b) = bid_style[1:3]
+
+def get_bid_funcs(bid_style=None):
+    if bid_style != None:
+        (a, b) = bid_style[1:3]
     return [
         lambda h: bid_random(a, b, h),
         lambda h: bid_from_average_value(a, b, h),
@@ -386,6 +413,7 @@ def get_allowed_cards(hand, lead_card):
 
 
 if __name__ == "__main__":
+    seed()
     try:
         main(argv)
     except KeyboardInterrupt:
