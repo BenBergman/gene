@@ -65,13 +65,15 @@ class TestSequenceFunctions(unittest.TestCase):
 #
 #        card = lowest_winning_card(get_allowed_cards(hand, lead_card), lead_card)
 #        self.assertEqual(str(card), "C08")
-#
-#    def test_lowest_winning_same_suit(self):
-#        lead_card = Card("C05")
-#
-#        card = lowest_winning_same_suit(get_allowed_cards(hand, lead_card), lead_card)
-#        self.assertEqual(str(card), "C08")
-#
+
+
+    def test_lowest_winning_same_suit(self):
+        lead_card = Card("C05")
+
+        card = lowest_winning_same_suit(get_allowed_cards(hand, lead_card), lead_card)
+        self.assertEqual(str(card), "C08")
+
+
 #    def test_lowest_non_trump(self):
 #        lead_card = Card("C05")
 #

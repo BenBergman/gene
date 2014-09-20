@@ -35,6 +35,7 @@ class Card:
     def __hash__(self):
         return hash(self.abbr)
 
+
 class Bot:
     def __init__(self, json_params):
         self.params = json_params
@@ -53,8 +54,10 @@ def get_bid_funcs(bid_style):
         lambda h: bid_from_average_value(a, b, h),
         ]
 
+
 def get_bid_func(bid_style):
     return get_bid_funcs(bid_style)[bid_style[0]]
+
 
 def bid_random(low, high, hand):
     #currently assuming valid range is 1-13
@@ -69,6 +72,7 @@ def bid_random(low, high, hand):
         low = high = mid
 
     return randint(low, high)
+
 
 def bid_from_average_value(decrease, increase, hand):
     #currently assuming valid range is 1-13
@@ -91,12 +95,28 @@ def get_play_funcs():
         lambda a, l: play_random(a, l)
         ]
 
+
 def get_play_func(play_style, round):
     return get_play_funcs()[play_style[round]]
+
 
 def play_random(allowed_cards, lead_card):
     idx = randint(0, len(allowed_cards) - 1)
     return list(allowed_cards)[idx]
+
+
+def lowest_winning_same_suit(allowed_cards, lead_card):
+    candidate_card = None
+    for card in allowed_cards:
+        if card.suit == lead_card.suit:
+            if candidate_card == None:
+                candidate_card = card
+                continue
+            if card.value > lead_card.value:
+                if card.value < candidate_card.value:
+                    candidate_card = card
+    return candidate_card
+
 
 
 def failure(msg):
