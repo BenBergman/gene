@@ -129,5 +129,14 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertNotEqual(bot_c, bot_b)
 
 
+    def test_crossover_bots(self):
+        bot_a = generate_random_bot()
+        bot_b = generate_random_bot()
+        bot_c = crossover_bots(bot_a, bot_b)
+
+        self.assertNotEqual(bot_a, bot_c)
+        self.assertNotEqual(bot_b, bot_c)
+
+
 if __name__ == '__main__':
     unittest.main()
