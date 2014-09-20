@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from json import dumps, loads
+from copy import deepcopy
 from random import randint
 from random import random
 from random import seed
@@ -87,21 +88,29 @@ def get_top_bots(bots, desired):
 
 
 def mutate_bot(bot):
-    new_bot = Bot(bot.params)
+    new_params = {"bid_style":deepcopy(bot.params["bid_style"]), "play_style":deepcopy(bot.params["play_style"])}
     threshold = 0.5
 
     if random() > threshold:
-        new_bot.params["bid_style"][0] = random_bid_style_index()
+        new_params["bid_style"][0] = random_bid_style_index()
 
     for i in range(1, 3):
         if random() > threshold:
-            new_bot.params["bid_style"][i] = randint(1,13)
+            new_num = randint(1, 13)
+            new_params["bid_style"][i] = new_num
 
     for i in range(0, 13):
         if random() > threshold:
-            new_bot.params["play_style"][i][0] = random_lead_play_index()
+            new_params["play_style"][i][0] = random_lead_play_index()
         if random() > threshold:
-            new_bot.params["play_style"][i][1] = random_second_play_index()
+            new_params["play_style"][i][1] = random_second_play_index()
+
+    new_bot = Bot(new_params)
+
+#    print("mutated from")
+#    print(bot.params)
+#    print("to")
+#    print(new_bot.params)
 
     return new_bot
 
@@ -149,7 +158,7 @@ class Bot:
             return get_second_play_func(self.params["play_style"][round][1])(allowed_cards, lead_card)
 
     def average_score(self):
-        if self.params.get("scores") == None:
+        if self.params.get("scores") == None or self.params.get("scores") == {}:
             return None
 
         sum = 0
@@ -164,7 +173,25 @@ class Bot:
         self.params["scores"].setdefault(game, score)
 
     def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.params == other.params
+        return isinstance(other, self.__class__) and self.params["bid_style"] == other.params["bid_style"] and self.params["play_style"] == other.params["play_style"]
+
+
+def join_bot_lists(bots_a, bots_b):
+    joined = []
+    for bot in bots_a:
+        joined.append(Bot(bot.params))
+
+    for bot in bots_b:
+        merged = False
+        for i in range(0, len(joined)):
+            if bot == joined[i]:
+                joined[i].params.setdefault("scores", {}).update(bot.params.get("scores", {}))
+                merged = True
+                break
+        if not merged:
+            joined.append(bot)
+
+    return joined
 
 
 def get_bid_funcs(bid_style=None):

@@ -118,15 +118,17 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_mutate_bot(self):
         bot_a = generate_random_bot()
-        seed(0)
+        seed()
         bot_b = mutate_bot(bot_a)
 
         self.assertNotEqual(bot_a, bot_b)
 
         seed(0)
         bot_c = mutate_bot(bot_a)
+        seed(0)
+        bot_d = mutate_bot(bot_a)
 
-        self.assertNotEqual(bot_c, bot_b)
+        self.assertEqual(bot_c, bot_d)
 
 
     def test_crossover_bots(self):
@@ -160,12 +162,25 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_new_generation(self):
         bots = []
-        for i in range(0, 100):
+        seed()
+        for i in range(0, 20):
             bots.append(generate_random_bot())
+
+        bots[0].save_score(1, 10)
+        bots[0].save_score(2, 20)
+        bots[1].save_score(3, 80)
+        bots[0].save_score(4, 30)
+        bots[0].save_score(5, 10)
+        bots[2].save_score(6, 20)
+        bots[3].save_score(7, 90)
+        bots[2].save_score(8, 30)
 
         new_bots = new_generation(bots)
 
         self.assertEqual(len(new_bots), 10)
+
+        bots = join_bot_lists(bots, new_bots)
+        self.assertEqual(len(bots), 27)
 
 
     def test_get_top_bots(self):
