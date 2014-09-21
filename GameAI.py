@@ -8,7 +8,6 @@ from random import seed
 from time import sleep
 from sys import exit, argv
 
-import os
 import urllib2
 
 base = "http://gameai.skullspace.ca/api/"
@@ -103,13 +102,16 @@ def get_top_bots(bots, desired):
         else:
             i = 0
             for i in range(0, len(top_bots)):
-                if bot.average_score() >= top_bots[i].average_score():
+                if bot.average_score() > top_bots[i].average_score():
+                    top_bots.insert(i, bot)
+                    break
+                elif bot.average_score() == top_bots[i].average_score() and len(bot.params.get("scores", {})) > len(top_bots[i].params.get("scores", {})):
                     top_bots.insert(i, bot)
                     break
             if i == len(top_bots):
                 top_bots.append(bot)
 
-    return top_bots[:3]
+    return top_bots[:desired]
 
 
 def mutate_bot(bot):
@@ -451,14 +453,15 @@ def main(argv):
         info("Generating next generation...")
         new_bots = new_generation(bots)
 
-        for bot in new_bots:
-            info("Next bot in generation...")
-            play_a_game(bot_id, bot, session)
-            sleep(5)
+        for i in range(0, 2):
+            for bot in new_bots:
+                info("Next bot in generation...")
+                play_a_game(bot_id, bot, session)
+                sleep(0.2)
 
-        bots = join_bot_lists(bots, new_bots)
-        info("Saving bots to file...")
-        store_bots(bots, "ga_backup.json")
+                bots = join_bot_lists(bots, new_bots)
+                info("Saving bots to file...")
+                store_bots(bots, "ga_backup.json")
 
 
 def play_a_game(bot_id, bot, session):
@@ -471,7 +474,7 @@ def play_a_game(bot_id, bot, session):
         # waiting 5 seconds.
         if json["result"] == "retry":
             print("?? " + json["reason"])
-            sleep(1)
+            sleep(0.2)
         else:
             break
 
@@ -495,7 +498,7 @@ def play_a_game(bot_id, bot, session):
         if json["game"] is None:
             break
         info("The server has ended our game.")
-        sleep(1)
+        sleep(0.2)
 
     json = rawapi("old-game", session=session, game=game_id)
     if json["result"] == "success":
@@ -523,7 +526,7 @@ def new_game(session, bot, hand):
     while hand:
         # Always wait 1 second, it may not seem like much but it helps avoid
         # pinning the client's CPU and flooding the server.
-        sleep(0.5)
+        sleep(0.2)
 
         # Request the game's status from the server.
         info("Requesting the status of our game...")
@@ -576,7 +579,6 @@ def new_game(session, bot, hand):
 
         # Among the cards that we have determined are valid, according to the
         # rules, choose one to play at random.
-        idx = randint(0, len(allowed_cards) - 1)
         card = bot.play(allowed_cards, lead_card, round)
         info("We have chosen " + str(card) + ".")
 

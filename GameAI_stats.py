@@ -40,13 +40,16 @@ def get_top_bots(bots, desired):
         else:
             i = 0
             for i in range(0, len(top_bots)):
-                if bot.average_score() >= top_bots[i].average_score():
+                if bot.average_score() > top_bots[i].average_score():
+                    top_bots.insert(i, bot)
+                    break
+                elif bot.average_score() == top_bots[i].average_score() and len(bot.params.get("scores", {})) > len(top_bots[i].params.get("scores", {})):
                     top_bots.insert(i, bot)
                     break
             if i == len(top_bots):
                 top_bots.append(bot)
 
-    return top_bots[:3]
+    return top_bots[:desired]
 
 
 def get_most_seasoned_bot(bots):
@@ -60,6 +63,22 @@ def get_most_seasoned_bot(bots):
             top_bot = bot
 
     return top_bot
+
+def get_most_seasoned_bots(bots, desired):
+    top_bots = []
+    for bot in bots:
+        if len(top_bots) == 0:
+            top_bots.append(bot)
+        else:
+            i = 0
+            for i in range(0, len(top_bots)):
+                if len(bot.params.get("scores", {})) >= len(top_bots[i].params.get("scores", {})):
+                    top_bots.insert(i, bot)
+                    break
+            if i == len(top_bots):
+                top_bots.append(bot)
+
+    return top_bots[:desired]
 
 
 class Bot:
@@ -285,10 +304,17 @@ def main(argv):
         quit
 
     print("Bots generated: " + str(len(bots)))
-    top_bot = list(get_top_bots(bots, 1))[0]
-    print("Best bot's average score: " + str(top_bot.average_score()) + "\t games played: " + str(len(top_bot.params.get("scores", {}))))
-    most_seasoned_bot = get_most_seasoned_bot(bots)
-    print("Most games played by single bot: " + str(len(most_seasoned_bot.params.get("scores", {}))) + "\t average score: " + str(most_seasoned_bot.average_score()))
+    print()
+    print("Top bots:")
+    top_bots = list(get_top_bots(bots, 5))
+    for top_bot in top_bots:
+        print("Best bot's average score: " + str(top_bot.average_score()) + "\t games played: " + str(len(top_bot.params.get("scores", {}))))
+
+    print()
+    print("Most seasoned bots:")
+    most_seasoned_bots = get_most_seasoned_bots(bots, 5)
+    for most_seasoned_bot in most_seasoned_bots:
+        print("Most games played by single bot: " + str(len(most_seasoned_bot.params.get("scores", {}))) + "\t average score: " + str(most_seasoned_bot.average_score()))
 
 
 if __name__ == "__main__":

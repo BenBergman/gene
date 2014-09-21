@@ -1,4 +1,6 @@
 from GameAI import *
+
+import os
 import unittest
 
 hand = list_to_hand(["C04", "C08", "C12", "D03", "D07", "D11", "H02", "H06", "H10", "S01", "S05", "S09", "S13"])
