@@ -87,9 +87,9 @@ def generate_random_play_style():
 
 def new_generation(bots):
     top_bots = get_top_bots(bots, 3)
-    most_seasoned_bots = get_most_seasoned_bots(bots, 1)
+    most_seasoned_bots = get_most_seasoned_bots(bots, 3)
     mutants = [mutate_bot(top_bots[0]), mutate_bot(top_bots[0]), mutate_bot(top_bots[1])]
-    crossovers = [crossover_bots(top_bots[0], bots[random_index(bots)]), crossover_bots(most_seasoned_bots[0], bots[random_index(bots)])]
+    crossovers = [crossover_bots(top_bots[0], bots[random_index(bots)]), crossover_bots(most_seasoned_bots[random_index(most_seasoned_bots)], bots[random_index(bots)])]
     new_bots = [generate_random_bot(), generate_random_bot(), generate_random_bot()]
 
     return top_bots + mutants + crossovers + new_bots
@@ -471,7 +471,7 @@ def main(argv):
         info("Generating next generation...")
         new_bots = new_generation(bots)
 
-        for i in range(0, 2):
+        for i in range(0, 3):
             for bot in new_bots:
                 info("Next bot in generation...")
                 play_a_game(bot_id, bot, session)
@@ -497,7 +497,7 @@ def play_a_game(bot_id, bot, session):
             break
 
     game_id = json["game"]
-    info("Starting game " + str(game_id))
+#    info("Starting game " + str(game_id))
 
     # Create an object to represent the cards we have been dealt.
     cards = json["cards"]
@@ -508,14 +508,14 @@ def play_a_game(bot_id, bot, session):
     new_game(session, bot, hand)
 
     # Cleanup from our game.
-    info("Our role in this game is over, but we need to be sure the server has ended the game before we start a new one.")
-    info("If we try to start a new game without the old one being done, the server will reject our request.")
+#    info("Our role in this game is over, but we need to be sure the server has ended the game before we start a new one.")
+#    info("If we try to start a new game without the old one being done, the server will reject our request.")
     while True:
-        info("Waiting for our game to be over...")
+#        info("Waiting for our game to be over...")
         json = api("status", session=session)
         if json["game"] is None:
             break
-        info("The server has ended our game.")
+#        info("The server has ended our game.")
         sleep(0.2)
 
     json = rawapi("old-game", session=session, game=game_id)
@@ -547,9 +547,9 @@ def new_game(session, bot, hand):
         sleep(0.2)
 
         # Request the game's status from the server.
-        info("Requesting the status of our game...")
+#        info("Requesting the status of our game...")
         json = api("status", session=session)
-        info("Status received.")
+#        info("Status received.")
 
         # If the game has ended prematurely, due to a forfeit from your opponent
         # or some other reason, rejoice and find a new opponent.
@@ -559,13 +559,13 @@ def new_game(session, bot, hand):
 
         # If we're still in the bidding process, it's nobody's turn.
         if json["your-turn"] is None:
-            info("Our game is still in the bidding phase, we need to wait for our opponent.")
+#            info("Our game is still in the bidding phase, we need to wait for our opponent.")
             continue
 
         # If not it's not our turn yet, jump back to the top of the loop to
         # check the status again.
         if json["your-turn"] == False:
-            info("It is currently our opponent's turn, we need to wait for our opponent.")
+#            info("It is currently our opponent's turn, we need to wait for our opponent.")
             continue
 
         # Finally, it's our turn. First, we have to determine if another card
@@ -575,14 +575,14 @@ def new_game(session, bot, hand):
             # round. So all the cards in our hand are allowed.
             allowed_cards = hand
             lead_card = None
-            info("We have the lead this round, so we may choose any card.")
+#            info("We have the lead this round, so we may choose any card.")
         else:
             # We can only play cards that match the suit of the lead card, since
             # we're going second in this round. Gather together all the cards in
             # our hand that have the appropriate suit.
             allowed_cards = set()
             lead_card = Card(json["opponent-current-card"])
-            info("Our opponent has lead this round, so we must try to play a card that matches the lead card's suit: " + lead_card.suit + ".")
+#            info("Our opponent has lead this round, so we must try to play a card that matches the lead card's suit: " + lead_card.suit + ".")
 
             for card in hand:
                 if card.suit == lead_card.suit:
@@ -592,13 +592,13 @@ def new_game(session, bot, hand):
             # appropriate suit. If we don't have any, there are no restrictions
             # on the card we can then play.
             if not allowed_cards:
-                info("We have no " + lead_card.suit + " in our hand, so we can play any suit we choose.")
+#                info("We have no " + lead_card.suit + " in our hand, so we can play any suit we choose.")
                 allowed_cards = hand
 
         # Among the cards that we have determined are valid, according to the
         # rules, choose one to play at random.
         card = bot.play(allowed_cards, lead_card, round)
-        info("We have chosen " + str(card) + ".")
+#        info("We have chosen " + str(card) + ".")
 
         # Now that the card has been chosen, play it.
         info("Attempting to play " + str(card) + "...")

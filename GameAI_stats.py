@@ -303,7 +303,25 @@ def main(argv):
         info("Could not load file " + filename)
         quit
 
+    top_score = 0
+    top_game = 0
+    games_played = 0
+    total = 0
+    for bot in bots:
+        scores = bot.params.get("scores", {})
+        for game in bot.params.get("scores", {}):
+            score = scores[game]
+            total += score
+            games_played += 1
+            if score >= top_score:
+                top_score = score
+                top_game = game
+
+
     print("Bots generated: " + str(len(bots)))
+    print("Games played: " + str(games_played))
+    print("Top score: " + str(top_score) + "\t in game " + str(top_game))
+    print("Combined scores: " + str(total))
     print()
     print("Top bots:")
     top_bots = list(get_top_bots(bots, 5))
